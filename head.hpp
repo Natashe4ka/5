@@ -29,14 +29,12 @@ struct Parametrs {
 #define PI 3.14159265358979323846
 
 
-bool scene_intersect(const Vec3d&, const Vec3d&, const std::vector<Figure*>&, Vec3d&, Vec3d&, Vec3d&);
-Vec3d cast_ray(const Vec3d&, const Vec3d&, const std::vector<Figure*>&, const Light&);
+bool scene_intersect(const Vec3d&, const Vec3d&, const std::vector<Figure*>&, Vec3d&, Vec3d&, Vec3d&, double);
+Vec3d cast_ray(const Vec3d&, const Vec3d&, const std::vector<Figure*>&, const Light&, double);
 void create_image(const std::vector<Figure*>&, Parametrs&);
-
 
 
 bool GetParametrs(const std::string&, Parametrs&);
 bool GetFigures(const std::string&, std::vector<Figure*>&);
-
 
 #endif

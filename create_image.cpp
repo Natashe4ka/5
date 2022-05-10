@@ -9,14 +9,14 @@ Vec3d reflect(const Vec3d& I, const Vec3d& N) {
     return I - N*2.0*(I*N);
 }
 
-bool scene_intersect(const Vec3d& begin, const Vec3d& vec, const std::vector<Figure*>& objects, Vec3d& point, Vec3d& N, Vec3d& colour) {
+bool scene_intersect(const Vec3d& begin, const Vec3d& vec, const std::vector<Figure*>& objects, Vec3d& point, Vec3d& N, Vec3d& colour, double limit) {
     double nearest_dist = std::numeric_limits<double>::max();
 
     bool intersect = 0; 
 
     for(size_t i = 0; i < objects.size(); ++i) {
         double CurrentDist = objects[i]->ray_intersect(begin, vec);
-        if(CurrentDist == -1) continue;   
+        if(CurrentDist == -1 || CurrentDist > limit) continue;
         
         intersect = 1;
 
@@ -32,12 +32,12 @@ bool scene_intersect(const Vec3d& begin, const Vec3d& vec, const std::vector<Fig
     return intersect;
 }
 
-Vec3d cast_ray(const Vec3d& begin, const Vec3d& vec, const std::vector<Figure*>& objects, const Light& light) {
+Vec3d cast_ray(const Vec3d& begin, const Vec3d& vec, const std::vector<Figure*>& objects, const Light& light, double limit) {
     Vec3d point, N;
     Vec3d colour;
 
     
-    if (!scene_intersect(begin, vec, objects, point, N, colour)) {
+    if (!scene_intersect(begin, vec, objects, point, N, colour, limit)) {
         return BACKGROUND_COLOUR;
     }
 
@@ -45,7 +45,7 @@ Vec3d cast_ray(const Vec3d& begin, const Vec3d& vec, const std::vector<Figure*>&
 
     Vec3d light_vec = (light._position - point).normalize();
     
-    double diffuse_light_intensity = light._intensity * std::max(0.0, light_vec*N); 
+    double diffuse_light_intensity = light._intensity * std::max(0.0, light_vec*N); // рассеянный свет
     
 
     double specular_exponent = 25;
@@ -82,7 +82,7 @@ void create_image(const std::vector<Figure*>& objects, Parametrs& param) {
             }
             vec = vec.normalize();
 
-            canvas[j][i] = cast_ray(param.cam, vec, objects, param.light);
+            canvas[j][i] = cast_ray(param.cam, vec, objects, param.light, param.limit);
         }
     }
 

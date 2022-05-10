@@ -4,7 +4,7 @@
 #include <iostream>
 #include "Vec3d.hpp"
 
-
+// источник света
 
 struct Light {
     Vec3d _position;
